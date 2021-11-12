@@ -71,7 +71,7 @@ function Git_PullScripts {
   cd ${ScriptsDir}
   git fetch --all
   ExitStatusScripts=$?
-  git reset --hard origin/main
+  git reset --hard origin/master
   echo
 }
 
