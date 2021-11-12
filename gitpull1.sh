@@ -60,7 +60,7 @@ function Git_PullShell {
 ## 克隆scripts
 function Git_CloneScripts {
   echo -e "克隆脚本\n"
-  git clone -b main ${ScriptsURL} ${ScriptsDir}
+  git clone -b master ${ScriptsURL} ${ScriptsDir}
   ExitStatusScripts=$?
   echo
 }
