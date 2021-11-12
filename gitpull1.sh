@@ -2,7 +2,7 @@
 
 ## 文件路径、脚本网址、文件版本以及各种环境的判断
 ShellDir=${JD_DIR:-$(cd $(dirname $0); pwd)}
-ShellJd=${ShellDir}/jd.sh ##[[ ${JD_DIR} ]] && ShellJd=jd || ShellJd=${ShellDir}/jd.sh
+[[ ${JD_DIR} ]] && ShellJd=jd || ShellJd=${ShellDir}/jd.sh
 LogDir=${ShellDir}/log
 [ ! -d ${LogDir} ] && mkdir -p ${LogDir}
 ScriptsDir=${ShellDir}/scripts
@@ -23,16 +23,27 @@ ContentNewTask=${ShellDir}/new_task
 ContentDropTask=${ShellDir}/drop_task
 SendCount=${ShellDir}/send_count
 isTermux=${ANDROID_RUNTIME_ROOT}${ANDROID_ROOT}
-ShellURL=https://github.com/hajiuhajiu/jd-shell
+ShellURL=https://github.com/hajiuhajiu/jd-base
 ScriptsURL=https://github.com/hajiuhajiu/scripts
 
 ## 更新crontab，gitee服务器同一时间限制5个链接，因此每个人更新代码必须错开时间，每次执行git_pull随机生成。
 ## 每天次数随机，更新时间随机，更新秒数随机，至少6次，至多12次，大部分为8-10次，符合正态分布。
 function Update_Cron {
   if [ -f ${ListCron} ]; then
-    perl -i -pe "s|.+(bash.+git_pull.+log.*)|2 0-23/1 \* \* \* sleep 5 && \1|" ${ListCron}
+        RanMin=$((${RANDOM} % 60))
+    RanSleep=$((${RANDOM} % 56))
+    RanHourArray[0]=$((${RANDOM} % 3))
+    for ((i=1; i<14; i++)); do
+      j=$(($i - 1))
+      tmp=$((${RANDOM} % 3 + ${RanHourArray[j]} + 2))
+      [[ ${tmp} -lt 24 ]] && RanHourArray[i]=${tmp} || break
+    done
+    RanHour=${RanHourArray[0]}
+    for ((i=1; i<${#RanHourArray[*]}; i++)); do
+      RanHour="${RanHour},${RanHourArray[i]}"
+    done
+    perl -i -pe "s|.+(bash.+git_pull.+log.*)|${RanMin} ${RanHour} \* \* \* sleep ${RanSleep} && \1|" ${ListCron}
     crontab ${ListCron}
-    echo -e "Update_Cron\n"
   fi
 }
 
@@ -40,58 +51,27 @@ function Update_Cron {
 function Git_PullShell {
   echo -e "更新shell...\n"
   cd ${ShellDir}
-  git config http.sslVerify "false"
-  git config --global http.sslVerify "false"
-  if [ ! -f "/root/jd/.git/index.lock" ];
- then  echo "删除lock文件"
- else   rm /root/jd/.git/index.lock
-  fi
-  if [ ! -f "/root/jd/config/config.sh" ];
- then  cp /root/jd/sample/config.sh.sample /root/jd/config/config.sh
-  fi
- 
- 
   git fetch --all
   ExitStatusShell=$?
-  git reset --hard origin/v3
-  echo
-}
-
-
-## 更新scripts
-function Git_PullScripts {
-  echo -e "更新脚本\n"
-  
-  git clone https://github.com/hajiuhajiu/scripts /root/jd/sc1
-  cp -Rf /root/jd/sc1/*.* /root/jd/scripts 
-  cp -Rf /root/jd/sc1/docker/*.* /root/jd/scripts/docker
-  rm sc1 -r
-  
-  cd ${ScriptsDir}
-  git config http.sslVerify "false"
-  git config --global http.sslVerify "false"
-  ## git fetch --all
-  ExitStatusScripts=$?
-  ## git reset --hard origin/master
+  git reset --hard origin/main
   echo
 }
 
 ## 克隆scripts
 function Git_CloneScripts {
-
-  echo -e "更新脚本\n"
-  
-  git clone https://github.com/hajiuhajiu/scripts /root/jd/sc1
-  cp -Rf /root/jd/sc1/*.* /root/jd/scripts 
-  cp -Rf /root/jd/sc1/docker/*.* /root/jd/scripts/docker
-  rm sc1 -r
-  
-  cd ${ScriptsDir}
-  git config http.sslVerify "false"
-  git config --global http.sslVerify "false"
-  ## git fetch --all
+  echo -e "克隆脚本\n"
+  git clone -b main ${ScriptsURL} ${ScriptsDir}
   ExitStatusScripts=$?
-  ## git reset --hard origin/master
+  echo
+}
+
+## 更新scripts
+function Git_PullScripts {
+  echo -e "更新脚本\n"
+  cd ${ScriptsDir}
+  git fetch --all
+  ExitStatusScripts=$?
+  git reset --hard origin/main
   echo
 }
 
@@ -114,6 +94,21 @@ function Count_UserSum {
   done
 }
 
+## 把config.sh中提供的所有账户的PIN附加在jd_joy_run.js中，让各账户相互进行宠汪汪赛跑助力
+function Change_JoyRunPins {
+  j=${UserSum}
+  PinALL=""
+  while [[ $j -ge 1 ]]
+  do
+    Tmp=Cookie$j
+    CookieTemp=${!Tmp}
+    PinTemp=$(echo ${CookieTemp} | perl -pe "{s|.*pt_pin=(.+);|\1|; s|%|\\\x|g}")
+    PinTempFormat=$(printf ${PinTemp})
+    PinALL="${PinTempFormat},${PinALL}"
+    let j--
+  done
+  perl -i -pe "{s|(let invite_pins = \[\')(.+\'\];?)|\1${PinALL}\2|; s|(let run_pins = \[\')(.+\'\];?)|\1${PinALL}\2|}" ${ScriptsDir}/jd_joy_run.js
+}
 
 ## 修改lxk0301大佬js文件的函数汇总
 function Change_ALL {
@@ -133,11 +128,8 @@ function Change_ALL {
 ## js-add.list  如果上述检测文件增加了定时任务，这个文件内容将不为空
 ## js-drop.list 如果上述检测文件删除了定时任务，这个文件内容将不为空
 function Diff_Cron {
-echo -e "Diff_Cron\n"
   if [ -f ${ListCron} ]; then
-   
     if [ -n "${JD_DIR}" ]
-    
     then
       grep -E " j[drx]_\w+" ${ListCron} | perl -pe "s|.+ (j[drx]_\w+).*|\1|" | sort -u > ${ListTask}
     else
@@ -146,7 +138,6 @@ echo -e "Diff_Cron\n"
     cat ${ListCronLxk} | grep -E "j[drx]_\w+\.js" | perl -pe "s|.+(j[drx]_\w+)\.js.+|\1|" | sort -u > ${ListJs}
     grep -vwf ${ListTask} ${ListJs} > ${ListJsAdd}
     grep -vwf ${ListJs} ${ListTask} > ${ListJsDrop}
-    echo -e "Diff_Cron2\n"
   else
     echo -e "${ListCron} 文件不存在，请先定义你自己的crontab.list...\n"
   fi
@@ -154,7 +145,6 @@ echo -e "Diff_Cron\n"
 
 ## 发送删除失效定时任务的消息
 function Notify_DropTask {
-echo -e "Notify_DropTask\n"
   cd ${ShellDir}
   node update.js
   [ -f ${ContentDropTask} ] && rm -f ${ContentDropTask}
@@ -163,7 +153,6 @@ echo -e "Notify_DropTask\n"
 ## 发送新的定时任务消息
 function Notify_NewTask {
   cd ${ShellDir}
-  echo -e "新的定时任务消息\n"
   node update.js
   [ -f ${ContentNewTask} ] && rm -f ${ContentNewTask}
 }
@@ -304,7 +293,7 @@ function Add_Cron {
       then
         echo "4 0,9 * * * bash ${ShellJd} ${Cron}" >> ${ListCron}
       else
-        cat ${ListCronLxk} | grep -E "\/${Cron}\." | perl -pe "s|(^.+)node */scripts/(j[drx]_\w+)\.js.+|\1bash /root/jd/jd.sh \2|" >> ${ListCron}
+        cat ${ListCronLxk} | grep -E "\/${Cron}\." | perl -pe "s|(^.+)node */scripts/(j[drx]_\w+)\.js.+|\1bash ${ShellJd} \2|" >> ${ListCron}
       fi
     done
 
