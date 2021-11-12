@@ -42,12 +42,12 @@ function Git_PullShell {
   cd ${ShellDir}
   git config http.sslVerify "false"
   git config --global http.sslVerify "false"
-  if [ ! -f "/root/jd/.git/index.lock" ];
+  if [ ! -f "~/jd-base/.git/index.lock" ];
  then  echo "删除lock文件"
- else   rm /root/jd/.git/index.lock
+ else   rm ~/jd-base/.git/index.lock
   fi
-  if [ ! -f "/root/jd/config/config.sh" ];
- then  cp /root/jd/sample/config.sh.sample /root/jd/config/config.sh
+  if [ ! -f "~/jd-base/config/config.sh" ];
+ then  cp ~/jd-base/sample/config.sh.sample ~/jd-base/config/config.sh
   fi
  
  
@@ -62,9 +62,9 @@ function Git_PullShell {
 function Git_PullScripts {
   echo -e "更新脚本\n"
   
-  git clone https://github.com/hajiuhajiu/scripts /root/jd/sc1
-  cp -Rf /root/jd/sc1/*.* /root/jd/scripts 
-  cp -Rf /root/jd/sc1/docker/*.* /root/jd/scripts/docker
+  git clone https://github.com/hajiuhajiu/scripts ~/jd-base/sc1
+  cp -Rf ~/jd-base/sc1/*.* ~/jd-base/scripts 
+  cp -Rf ~/jd-base/sc1/docker/*.* ~/jd-base/scripts/docker
   rm sc1 -r
   
   cd ${ScriptsDir}
@@ -82,8 +82,8 @@ function Git_CloneScripts {
   echo -e "更新脚本\n"
   
   git clone https://github.com/hajiuhajiu/scripts /root/jd/sc1
-  cp -Rf /root/jd/sc1/*.* /root/jd/scripts 
-  cp -Rf /root/jd/sc1/docker/*.* /root/jd/scripts/docker
+  cp -Rf ~/jd-base/sc1/*.* ~/jd-base/scripts 
+  cp -Rf ~/jd-base/sc1/docker/*.* ~/jd-base/scripts/docker
   rm sc1 -r
   
   cd ${ScriptsDir}
