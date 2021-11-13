@@ -1,4 +1,4 @@
-# 在crontab.list中，家目录请不要写成 ~ ，必须输入家目录的完整路径 /data/data/com.termux/files/home
+# 在crontab.list中，加目录请不要写成 ~ ，必须输入家目录的完整路径 /data/data/com.termux/files/home
 PATH=/data/data/com.termux/files/usr/bin
 
 # 更新lxk0301大佬的js脚本，日志记录在脚本目录下log文件夹中：
