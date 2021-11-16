@@ -1,14 +1,14 @@
 ShellDir=${JD_DIR:-$(cd $(dirname $0); pwd)}
 ScriptsDir=${ShellDir}/scripts
 
-if [ ! -x "ShellDir/sharecode" ]; 
-then mkdir ShellDir/sharecode
+if [ ! -x "${ShellDir}/sharecode" ]; 
+then mkdir ${ShellDir}/sharecode
 else echo "互助码复制成功，可手动删除" 
 fi
 
-cp ShellDir/log/jd_get_share_code/*.*  ShellDir/sharecode -f
-rm ShellDir//log -r
-cp ShellDir/sharecode ShellDir/log/jd_get_share_code/ -f
+cp ${ShellDir}/log/jd_get_share_code/*.*  ${ShellDir}/sharecode -f
+rm ${ShellDir}/log -r
+cp ${ShellDir}/sharecode ${ShellDir}/log/jd_get_share_code/ -f
 
 ##rm /root/jd/log -r
 
@@ -56,8 +56,8 @@ then  echo ""
 else  rm -f /root/jd/scripts/jd_cfdtx.js
 fi
 
-if [ ! -f "ScriptsDir/jd_rankingList.js" ];
+if [ ! -f "${ShellDir}/jd_rankingList.js" ];
 then  echo "目录文件不存在"
-else  rm -f ScriptsDir/jd_rankingList.js
+else  rm -f ${ShellDir}/jd_rankingList.js
 fi
 
