@@ -1,63 +1,49 @@
 ShellDir=${JD_DIR:-$(cd $(dirname $0); pwd)}
 ScriptsDir=${ShellDir}/scripts
-
 if [ ! -x "${ShellDir}/sharecode" ]; 
 then mkdir ${ShellDir}/sharecode
 else echo "互助码复制成功，可手动删除" 
 fi
-
 cp ${ShellDir}/log/jd_get_share_code/*.*  ${ShellDir}/sharecode -f
 rm ${ShellDir}/log -r
 cp ${ShellDir}/sharecode ${ShellDir}/log/jd_get_share_code/ -f
+#删除失效脚本
 
-##rm /root/jd/log -r
+rm -f ${ShellDir}/scripts/smiek2221_JDJRValidator_Pure.js
+rm -f ${ShellDir}/scripts/jd_nhs_red1.js 
+rm -f ${ShellDir}/scripts/jd_DrawEntrance.js
+rm -f ${ShellDir}/scripts/jd_redEnvelope1.js
+rm -f ${ShellDir}/scripts/jd_hello_wind_xtg.js
+rm -f ${ShellDir}/scripts/jd_xiaolong.js
+rm -f ${ShellDir}/scripts/ jd_hotNeight.js
+rm -f ${ShellDir}/scripts/jd_carnivalcity.js
+rm -f ${ShellDir}/scripts/JDJRValidator.js
+rm -f ${ShellDir}/scripts/JD_DailyBonus.js
+rm -f ${ShellDir}/scripts/jd_ShopSign.js
+rm -f ${ShellDir}/scripts/jd_chinajoy.js
+rm -f ${ShellDir}/scripts/jd_cfdtx.js
+rm -f ${ShellDir}/scripts/jd_sxLottery.js
+rm -f ${ShellDir}/scripts/jd_xtgsign.js
+rm -f ${ShellDir}/scripts/jd_split.js
+rm -f ${ShellDir}/scripts/jd_goodMorning.js
+rm -f ${ShellDir}/scripts/jd_ys.js
+rm -f ${ShellDir}/scripts/jd_city.js
+rm -f ${ShellDir}/scripts/jd_travel.js
+rm -f ${ShellDir}/scripts/jd_travel_shop.js
+rm -f ${ShellDir}/scripts/jd_travel_help.js
+rm -f ${ShellDir}/scripts/smiek2221_sign_graphics_validate.js
+rm -f ${ShellDir}/scripts/jd_nhs_red3.js
+rm -f ${ShellDir}/scripts/jd_nhs_red2.js
+rm -f ${ShellDir}/scripts/jd_nhs_red1.js
+rm -f ${ShellDir}/scripts/jd_nhs_red.js
+rm -f ${ShellDir}/scripts/jd_opencard6.js
+rm -f ${ShellDir}/scripts/jd_festival.js
+rm -f ${ShellDir}/scripts/jd_sevenday.js
+rm -f ${ShellDir}/scripts/jd_order.js
+rm -f ${ShellDir}/scripts/jd_star.js
 
-rm /root/jd/scripts/jd_dwnc.py
 
-if [ ! -f "/root/jd/scripts/jd_fcwb.js" ];
-then  echo "文件不存在"
-else  rm -f /root/jd/scripts/jd_fcwb.js
-fi
-if [ ! -x " /root/jd/.github/workflows" ]; 
-then echo "文件夹不存在" 
-else rm /root/jd/.github/workflows -r
-fi
-if [ ! -f "/root/jd/scripts/jd_lol.js" ];
-then  echo "文件不存在"
-else  rm -f /root/jd/scripts/jd_lol.js
-fi
-if [ ! -f "/root/jd/scripts/jd_djyyj.js" ];
-then  echo "文件不存在"
-else  rm -f /root/jd/scripts/jd_djyyj.js
-fi
-if [ ! -f "/root/jd/scripts/JD_extra_cookie.js" ];
-then  echo ""
-else  rm -f /root/jd/scripts/JD_extra_cookie.js 
-fi
-if [ ! -f "/root/jd/scripts/jd_GoldcoinToGift.js" ];
-then  echo ""
-else  rm -f /root/jd/scripts/jd_GoldcoinToGift.js 
-fi
-if [ ! -f "/root/jd/scripts/jd_ShopSign.js" ];
-then  echo ""
-else  rm -f /root/jd/scripts/jd_ShopSign.js
-fi
-if [ ! -f "/root/jd/scripts/jd_carnivalcity.js" ];
-then  echo ""
-else  rm -f /root/jd/scripts/jd_carnivalcity.js
-fi
-if [ ! -f "/root/jd/scripts/jd_chinajoy.js" ];
-then  echo ""
-else  rm -f /root/jd/scripts/jd_chinajoy.js
-fi
-
-if [ ! -f "/root/jd/scripts/jd_cfdtx.js" ];
-then  echo ""
-else  rm -f /root/jd/scripts/jd_cfdtx.js
-fi
-
-if [ ! -f "${ShellDir}/jd_rankingList.js" ];
+if [ ! -f "${ShellDir}/scripts/jd_city.js" ];
 then  echo "目录文件不存在"
-else  rm -f ${ShellDir}/jd_rankingList.js
+else  rm -f ${ShellDir}/scripts/jd_city.js
 fi
-
